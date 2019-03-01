@@ -1,0 +1,5 @@
+core/
+Release/
+libraries/
+/Debug/
+.settings/
