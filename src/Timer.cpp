@@ -67,8 +67,11 @@ void Timer::update(unsigned long  mills)
 	isFront = false;
 	if (isRunning)
 	{
-		elapsed = mills - startTime;
+		if (mills > startTime)
+			elapsed = mills - startTime;
 	}
+	else
+		isFront = false;
 	if ((elapsed >= duration) && isRunning)
 	{
 		isRunning = false;
@@ -77,8 +80,37 @@ void Timer::update(unsigned long  mills)
 	}
 }
 
-unsigned long	Timer::getDuration(){
-	return(duration);
+uint8_t *Timer::getDuration()
+{
+	unsigned long units, decimals;
+	static uint8_t retVal[2];
+	if (duration >= (unsigned long) 24 * 60 * 60 * 1000)
+	{
+		retVal[0] = 192;
+		units = duration / (unsigned long) 24 * 60 * 60 * 1000;
+		decimals = (duration % 24 * 60 * 60 * 1000) / 60 * 60 * 1000;
+	}
+	else if (duration >= (unsigned long) 60 * 60 * 1000)
+	{
+		retVal[0] = 128;
+		units = duration / (unsigned long) 60 * 60 * 1000;
+		decimals = (duration % 60 * 60 * 1000) / 60 * 1000;
+	}
+	else if (duration >= (unsigned long) 60 * 1000)
+	{
+		retVal[0] = 64;
+		units = duration / 60 * 1000;
+		decimals = (duration % 60 * 1000) / 1000;
+	}
+	else
+	{
+		retVal[0] = 0;
+		units = duration / 1000;
+		decimals = (duration % 1000);
+	}
+	retVal[0] |= (units >> 1);
+	retVal[1] = (((units & 0b00000001)<<7) | decimals);
+	return(retVal);
 }
 
 char* Timer::getName()
@@ -133,9 +165,12 @@ char* Timer::toHex(uint8_t a)
 void Timer::setDuration(uint8_t * t)
 {
 	unsigned long units, decimals;
+	char msgOut[32];
 
-	units = (unsigned long)(((t[0] & 0b00111111)<<1)+(t[1] & 0b10000000));
+	units = (unsigned long)(((t[0] & 0b00111111)<<1)+((t[1] & 0b10000000)>>7));
 	decimals = (unsigned long)(t[1] & 0b01111111);
+	sprintf(msgOut, "units %ld decimals %ld", units, decimals);
+	debug(msgOut);
 
 	switch((t[0] & 0b11000000)>>6)
 	{
@@ -157,4 +192,6 @@ void Timer::setDuration(uint8_t * t)
 		break;
 	}
 	duration = units + decimals;
+	sprintf(msgOut, "duration set to %ld", duration);
+	debug(msgOut);
 }

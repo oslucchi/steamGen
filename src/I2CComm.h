@@ -12,7 +12,7 @@
 #include <Wire.h>
 #include <ArduinoControl.h>
 
-#define I2C_BUS_ADDRESS	8
+#define I2C_BUS_ADDRESS	7
 
 class I2CComm {
 private:

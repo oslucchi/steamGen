@@ -13,6 +13,7 @@
 #include <CommandHandler.h>
 #include <ValveTriState.h>
 #include <DigitalOutput.h>
+#include <DigitalInput.h>
 
 #define	TYPE_LED_PWM			1
 #define	TYPE_DIGITAL_OUT		2
@@ -30,7 +31,7 @@
 #define	COMM_BUF_SIZE	96
 
 class ArduinoControl {
-	CommandHandler steamLigthsSensors;
+	CommandHandler steamGen;
 	bool initialized;
 	TimerManager timerManager;
 

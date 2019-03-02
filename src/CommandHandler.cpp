@@ -5,15 +5,9 @@
  *      Author: osvaldo
  */
 
-#include "Arduino.h"
 
 #include <CommandHandler.h>
 #include <ArduinoControl.h>
-#include <DigitalInput.h>
-#include <DigitalOutput.h>
-#include <LedRGB.h>
-#include <ValveTriState.h>
-
 
 void CommandHandler::addCommand(uint8_t ctrlId, byte ctrlType, uint8_t* pin, uint8_t* upperBound,
 								uint8_t *lowerBound, uint8_t* actualValue, TimerManager* timerManager)
@@ -24,20 +18,15 @@ void CommandHandler::addCommand(uint8_t ctrlId, byte ctrlType, uint8_t* pin, uin
 	current = current->next;
 	switch(ctrlType)
 	{
-//	case TYPE_LED_PWM:
-//		current->cmd = new LedPwm();
-//		break;
-//	case TYPE_DIGITAL_OUT:
-//		current->cmd = new DigitalOutput();
-//		break;
-//	case TYPE_DIGITAL_IN:
-//		current->cmd = new DigitalInput();
-//		break;
-//	case TYPE_VALVE_TRISTATE:
-//		current->cmd = new ValveTriState();
-//		break;
-	case TYPE_LED_RGB:
-		current->cmd = new LedRGB(timerManager);
+	case TYPE_DIGITAL_OUT:
+		current->cmd = new DigitalOutput(timerManager);
+		break;
+	case TYPE_DIGITAL_IN:
+		current->cmd = new DigitalInput(timerManager);
+		break;
+	case TYPE_VALVE_TRISTATE:
+		current->cmd = new ValveTriState(timerManager);
+		break;
 	}
 	current->cmd->ctrlId = ctrlId;
 	current->cmd->ctrlType = ctrlType;

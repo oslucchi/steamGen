@@ -7,6 +7,11 @@
 
 #ifndef COMMANDHANDLER_H_
 #define COMMANDHANDLER_H_
+
+#include "Arduino.h"
+#include <DigitalInput.h>
+#include <DigitalOutput.h>
+#include <ValveTriState.h>
 #include "Command.h"
 
 #define  I2CCMD_ACK (uint8_t)0x00

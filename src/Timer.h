@@ -9,7 +9,7 @@
 #define TIMER_H_
 
 #include "Arduino.h"
-#include <steamBath.h>
+#include <steamGen.h>
 
 class Timer {
 	unsigned long startTime;
@@ -29,7 +29,7 @@ public:
 	void setName(const char *);
 	unsigned long getTimeToExpiry();
 	unsigned long getTimeElapsed();
-	unsigned long getDuration();
+	uint8_t* getDuration();
 	char *getName();
 	bool getIsRunning();
 	bool getIsExpired();

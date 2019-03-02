@@ -34,7 +34,7 @@ void loop()
 {
 	unsigned long now = millis();
 	ac->loop(now);
-	if (now - startTime > 1000)
+	if (now - startTime > 2000)
 	{
 		digitalWrite(LED_BUILTIN, (status = !status));
 		startTime = now;

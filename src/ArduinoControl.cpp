@@ -25,20 +25,20 @@ ArduinoControl::ArduinoControl() {
 	actualValue[0] = 0;
 	actualValue[1] = -1;
 	actualValue[2] = -1;
-	steamLigthsSensors.addCommand(CTRLID_STEAM_WATER_IN, (uint8_t) TYPE_VALVE_TRISTATE, pin,
-								  upperBound, lowerBound, actualValue, &timerManager);
+	steamGen.addCommand(CTRLID_STEAM_WATER_IN, (uint8_t) TYPE_VALVE_TRISTATE, pin,
+						upperBound, lowerBound, actualValue, &timerManager);
 
 	pin[0] = 12;
 	pin[1] = -1;
-	steamLigthsSensors.addCommand(CTRLID_STEAM_WATER_OUT, (uint8_t) TYPE_DIGITAL_OUT, pin,
+	steamGen.addCommand(CTRLID_STEAM_WATER_OUT, (uint8_t) TYPE_DIGITAL_OUT, pin,
 								  upperBound, lowerBound, actualValue, &timerManager);
 
 	pin[0] = 4;
-	steamLigthsSensors.addCommand(CTRLID_STEAM_POWER, (uint8_t) TYPE_DIGITAL_OUT, pin,
+	steamGen.addCommand(CTRLID_STEAM_POWER, (uint8_t) TYPE_DIGITAL_OUT, pin,
 								  upperBound, lowerBound, actualValue, &timerManager);
 
 	pin[0] = 13;
-	steamLigthsSensors.addCommand(CTRLID_HUMIDITY_SENSOR, (uint8_t) TYPE_DIGITAL_IN, pin,
+	steamGen.addCommand(CTRLID_HUMIDITY_SENSOR, (uint8_t) TYPE_DIGITAL_IN, pin,
 								  upperBound, lowerBound, actualValue, &timerManager);
 }
 
@@ -68,7 +68,7 @@ char* ArduinoControl::toHex(uint8_t a)
 
 void ArduinoControl::setup(unsigned long now)
 {
-	cmdList *current = steamLigthsSensors.getController();
+	cmdList *current = steamGen.getController();
 	while((current = current->next) != nullptr)
 	{
 		current->cmd->setup(now);
@@ -83,7 +83,7 @@ void ArduinoControl::loop(unsigned long now)
 	}
 	timerManager.update(now);
 
-	cmdList *current = steamLigthsSensors.getController();
+	cmdList *current = steamGen.getController();
 	while((current = current->next) != nullptr)
 	{
 		current->cmd->loop(now);
@@ -92,7 +92,7 @@ void ArduinoControl::loop(unsigned long now)
 
 Command* ArduinoControl::getCommand(unsigned char ctrlId)
 {
-	cmdList *current = steamLigthsSensors.getController();
+	cmdList *current = steamGen.getController();
 	while((current = current->next) != nullptr)
 	{
 		if (current->cmd->ctrlId == ctrlId)
@@ -171,7 +171,13 @@ int ArduinoControl::initializeControls(const uint8_t * command, uint8_t * respon
 	((ValveTriState *)ctrl)->initializeControl(command);
 
 	ctrl = getCommand(CTRLID_STEAM_WATER_OUT);
-	((ValveTriState *)ctrl)->initializeControl(command);
+	((DigitalOutput *)ctrl)->initializeControl(command);
+
+	ctrl = getCommand(CTRLID_STEAM_POWER);
+	((DigitalOutput *)ctrl)->initializeControl(command);
+
+	ctrl = getCommand(CTRLID_HUMIDITY_SENSOR);
+	((DigitalInput *)ctrl)->initializeControl(command);
 
 //	Valve steamWaterIn
 //		byte 2 which way A / B (0x01 / 0x02)
